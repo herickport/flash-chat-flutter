@@ -18,9 +18,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Container(
-                  child: Image.asset('images/logo.png'),
-                  height: 60.0,
+                Hero(
+                  tag: 'logo',
+                  child: Container(
+                    child: Image.asset('images/logo.png'),
+                    height: 60.0,
+                  ),
                 ),
                 Text(
                   'Flash Chat',
@@ -31,27 +34,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ],
             ),
-            SizedBox(
-              height: 48.0,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: CustomButton(
-                color: Colors.lightBlueAccent,
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/login');
-                },
-                childText: 'Log In',
+            SizedBox(height: 48.0),
+            Hero(
+              tag: 'login',
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: CustomButton(
+                  color: Colors.lightBlueAccent,
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/login');
+                  },
+                  childText: 'Log In',
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: CustomButton(
-                color: Colors.blueAccent,
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/register');
-                },
-                childText: 'Register',
+            Hero(
+              tag: 'register',
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: CustomButton(
+                  color: Colors.blueAccent,
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/register');
+                  },
+                  childText: 'Register',
+                ),
               ),
             ),
           ],
