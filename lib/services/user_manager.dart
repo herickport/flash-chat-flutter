@@ -1,22 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/models/user.dart';
+import 'package:flash_chat/utils/firebase_errors.dart';
 import 'package:flutter/services.dart';
 
 class UserManager {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> signUp(User user) async {
+  Future<void> signUp({User user, Function onSuccess, Function onFail}) async {
     try {
       final AuthResult result = await _auth.createUserWithEmailAndPassword(
         email: user.email,
         password: user.password,
       );
 
-      final FirebaseUser newUser = result.user;
-
-      if (newUser != null) {}
+      if (result.user != null) {
+        onSuccess();
+      }
     } on PlatformException catch (e) {
-      print(e.message);
+      onFail(getErrorString(e.code));
+    }
+  }
+
+  Future<void> signIn({User user, Function onSuccess, Function onFail}) async {
+    try {
+      final AuthResult result = await _auth.signInWithEmailAndPassword(
+        email: user.email,
+        password: user.password,
+      );
+
+      if (result.user != null) {
+        onSuccess();
+      }
+    } on PlatformException catch (e) {
+      onFail(getErrorString(e.code));
     }
   }
 
