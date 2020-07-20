@@ -15,10 +15,12 @@ class FlashChat extends StatelessWidget {
     return MaterialApp(
       title: 'Flash Chat',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData.light().copyWith(
+        primaryColor: Colors.lightBlueAccent,
         scaffoldBackgroundColor: Colors.white,
         textTheme: TextTheme(
           bodyText2: TextStyle(color: Colors.black54),
+          subtitle1: TextStyle(color: Colors.black),
         ),
       ),
       initialRoute: '/',

@@ -1,5 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:flash_chat/widgets/custom_button.dart';
+import 'package:flash_chat/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: Duration(milliseconds: 1500),
     );
 
     animation = ColorTween(
@@ -27,7 +27,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     ).animate(controller);
 
     controller.forward();
-
     controller.addListener(() {
       setState(() {});
     });
@@ -73,28 +72,22 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             SizedBox(height: 48.0),
             Hero(
               tag: 'login',
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: CustomButton(
-                  color: Colors.lightBlueAccent,
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/login');
-                  },
-                  childText: 'Log In',
-                ),
+              child: RoundedButton(
+                title: 'Log In',
+                color: Colors.lightBlueAccent,
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/login');
+                },
               ),
             ),
             Hero(
               tag: 'register',
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: CustomButton(
-                  color: Colors.blueAccent,
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/register');
-                  },
-                  childText: 'Register',
-                ),
+              child: RoundedButton(
+                title: 'Register',
+                color: Colors.blueAccent,
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/register');
+                },
               ),
             ),
           ],
