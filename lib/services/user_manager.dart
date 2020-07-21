@@ -42,7 +42,7 @@ class UserManager {
       FirebaseUser user = await _auth.currentUser();
 
       if (user != null) {
-        currentUser = User(email: user.email);
+        currentUser = User(id: user.uid, email: user.email);
       }
 
       return currentUser;

@@ -1,4 +1,5 @@
 import 'package:flash_chat/models/user.dart';
+import 'package:flash_chat/services/message_manager.dart';
 import 'package:flash_chat/services/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
@@ -9,6 +10,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  TextEditingController _messageTextController = TextEditingController();
+
   User loggedInUser;
 
   @override
@@ -22,7 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
     loggedInUser = await UserManager().getCurrentUser();
 
     if (loggedInUser != null) {
-      print(loggedInUser.email);
+      print(loggedInUser.id);
     } else {
       print('>> Nenhum usuário logado');
     }
@@ -32,6 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
@@ -57,15 +61,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
-                      onChanged: (value) {
-                        //Do something with the user input.
-                      },
+                      controller: _messageTextController,
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   FlatButton(
-                    onPressed: () {
-                      //Implement send functionality.
+                    onPressed: () async {
+                      await MessageManager().sendMessage(
+                        userId: loggedInUser.id,
+                        text: _messageTextController.text,
+                      );
+
+                      print('>> Mensagem enviada');
                     },
                     child: Text(
                       'Send',
