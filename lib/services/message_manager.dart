@@ -11,6 +11,7 @@ class MessageManager {
         {
           'sender': {'uid': user.id, 'email': user.email},
           'text': text,
+          'created_at': FieldValue.serverTimestamp(),
         },
       );
     } on PlatformException catch (e) {

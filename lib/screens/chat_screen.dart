@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flash_chat/components/message_bubble.dart';
 import 'package:flash_chat/models/message.dart';
 import 'package:flash_chat/models/user.dart';
 import 'package:flash_chat/services/message_manager.dart';
@@ -55,35 +56,38 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance.collection('messages').snapshots(),
-              builder: (_, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                List<Message> messages = [];
-                for (DocumentSnapshot document in snapshot.data.documents) {
-                  messages.add(Message.fromDocument(document));
-                }
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    return Text(
-                      '${messages[index].text} from ${messages[index].user.email}',
-                      style: TextStyle(
-                        color: loggedInUser.id == messages[index].user.id
-                            ? Colors.blue
-                            : Colors.red,
-                      ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection('messages')
+                    .orderBy('created_at', descending: true)
+                    .snapshots(),
+                builder: (_, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                );
-              },
+                  }
+
+                  List<Message> messages = [];
+                  for (DocumentSnapshot document in snapshot.data.documents) {
+                    messages.add(Message.fromDocument(document));
+                  }
+
+                  return ListView.builder(
+                    reverse: true,
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      return MessageBubble(
+                        message: messages[index],
+                        isLoggedInUser:
+                            loggedInUser.id == messages[index].user.id,
+                      );
+                    },
+                  );
+                },
+              ),
             ),
             Container(
               decoration: kMessageContainerDecoration,
@@ -98,12 +102,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   FlatButton(
                     onPressed: () async {
+                      final String text = _messageTextController.text;
+                      _messageTextController.clear();
+
                       await MessageManager().sendMessage(
                         user: loggedInUser,
-                        text: _messageTextController.text,
+                        text: text,
                       );
-
-                      _messageTextController.clear();
                     },
                     child: Text(
                       'Send',
