@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flash_chat/models/message.dart';
 import 'package:flash_chat/models/user.dart';
 import 'package:flash_chat/services/message_manager.dart';
 import 'package:flash_chat/services/user_manager.dart';
@@ -53,7 +55,36 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(),
+            StreamBuilder<QuerySnapshot>(
+              stream: Firestore.instance.collection('messages').snapshots(),
+              builder: (_, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                List<Message> messages = [];
+                for (DocumentSnapshot document in snapshot.data.documents) {
+                  messages.add(Message.fromDocument(document));
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    return Text(
+                      '${messages[index].text} from ${messages[index].user.email}',
+                      style: TextStyle(
+                        color: loggedInUser.id == messages[index].user.id
+                            ? Colors.blue
+                            : Colors.red,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -68,11 +99,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   FlatButton(
                     onPressed: () async {
                       await MessageManager().sendMessage(
-                        userId: loggedInUser.id,
+                        user: loggedInUser,
                         text: _messageTextController.text,
                       );
 
-                      print('>> Mensagem enviada');
+                      _messageTextController.clear();
                     },
                     child: Text(
                       'Send',
