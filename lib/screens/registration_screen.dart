@@ -26,85 +26,86 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         inAsyncCall: showSpinner,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: Center(
-            child: ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                Hero(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Flexible(
+                child: Hero(
                   tag: 'logo',
                   child: Container(
                     height: 150.0,
                     child: Image.asset('images/logo.png'),
                   ),
                 ),
-                SizedBox(height: 48.0),
-                TextField(
-                  controller: _emailController,
-                  decoration: kTextFieldDecoration.copyWith(
-                    labelText: 'Enter your email',
-                  ),
-                  keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 48.0),
+              TextField(
+                controller: _emailController,
+                decoration: kTextFieldDecoration.copyWith(
+                  labelText: 'Enter your email',
                 ),
-                SizedBox(height: 16.0),
-                TextField(
-                  controller: _passwordController,
-                  decoration: kTextFieldDecoration.copyWith(
-                    labelText: 'Enter your password',
-                  ),
-                  obscureText: true,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _passwordController,
+                decoration: kTextFieldDecoration.copyWith(
+                  labelText: 'Enter your password',
                 ),
-                SizedBox(height: 24.0),
-                Hero(
-                  tag: 'register',
-                  child: RoundedButton(
-                    title: 'Register',
-                    color: Colors.blueAccent,
-                    onPressed: () async {
-                      User user = User(
-                        email: _emailController.text,
-                        password: _passwordController.text,
-                      );
+                obscureText: true,
+              ),
+              SizedBox(height: 24.0),
+              Hero(
+                tag: 'register',
+                child: RoundedButton(
+                  title: 'Register',
+                  color: Colors.blueAccent,
+                  onPressed: () async {
+                    User user = User(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    );
 
-                      setState(() {
-                        showSpinner = true;
-                      });
-                      await UserManager().signUp(
-                        user: user,
-                        onSuccess: () {
-                          setState(() {
-                            showSpinner = false;
-                          });
-                          Navigator.of(context).pushReplacementNamed('/chat');
-                        },
-                        onFail: (error) {
-                          setState(() {
-                            showSpinner = false;
-                          });
-                          _scaffoldKey.currentState.showSnackBar(
-                            SnackBar(
-                              content: RichText(
-                                text: TextSpan(
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: 'Error ao registrar: ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    await UserManager().signUp(
+                      user: user,
+                      onSuccess: () {
+                        setState(() {
+                          showSpinner = false;
+                        });
+                        Navigator.of(context).pushReplacementNamed('/chat');
+                      },
+                      onFail: (error) {
+                        setState(() {
+                          showSpinner = false;
+                        });
+                        _scaffoldKey.currentState.showSnackBar(
+                          SnackBar(
+                            content: RichText(
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Error ao registrar: ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    TextSpan(text: error),
-                                  ],
-                                ),
+                                  ),
+                                  TextSpan(text: error),
+                                ],
                               ),
-                              backgroundColor: Colors.redAccent,
                             ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
