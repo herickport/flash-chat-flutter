@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flash_chat/components/message_bubble.dart';
-import 'package:flash_chat/models/message.dart';
+import 'package:flash_chat/components/messages_stream.dart';
 import 'package:flash_chat/models/user.dart';
 import 'package:flash_chat/services/message_manager.dart';
 import 'package:flash_chat/services/user_manager.dart';
@@ -8,30 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 
 class ChatScreen extends StatefulWidget {
+  ChatScreen({this.currentUser});
+
+  final User currentUser;
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController _messageTextController = TextEditingController();
-
   User loggedInUser;
 
   @override
   void initState() {
     super.initState();
 
-    getUser();
-  }
-
-  void getUser() async {
-    loggedInUser = await UserManager().getCurrentUser();
-
-    if (loggedInUser != null) {
-      print(loggedInUser.id);
-    } else {
-      print('>> Nenhum usuário logado');
-    }
+    loggedInUser = widget.currentUser;
   }
 
   @override
@@ -45,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
             onPressed: () async {
               await UserManager().signOut();
 
-              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
             },
           ),
         ],
@@ -57,37 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection('messages')
-                    .orderBy('created_at', descending: true)
-                    .snapshots(),
-                builder: (_, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  List<Message> messages = [];
-                  for (DocumentSnapshot document in snapshot.data.documents) {
-                    messages.add(Message.fromDocument(document));
-                  }
-
-                  return ListView.builder(
-                    reverse: true,
-                    padding: const EdgeInsets.all(8.0),
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      return MessageBubble(
-                        message: messages[index],
-                        isLoggedInUser:
-                            loggedInUser.id == messages[index].user.id,
-                      );
-                    },
-                  );
-                },
-              ),
+              child: MessagesStream(loggedInUser: loggedInUser),
             ),
             Container(
               decoration: kMessageContainerDecoration,

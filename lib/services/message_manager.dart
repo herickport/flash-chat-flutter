@@ -18,18 +18,4 @@ class MessageManager {
       print(e.message);
     }
   }
-
-  // Future<void> getMessages() async {
-  //   List<Message> messages = [];
-
-  //   await for (var snapshot in _firestore.collection('messages').snapshots()) {
-  //     for (DocumentSnapshot doc in snapshot.documents) {
-  //       messages.add(Message.fromDocument(doc));
-  //     }
-
-  //     for (Message m in messages) {
-  //       print('${m.userId}, ${m.text}');
-  //     }
-  //   }
-  // }
 }

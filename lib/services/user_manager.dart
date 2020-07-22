@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 class UserManager {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  User loggedInUser;
 
   Future<void> signUp({User user, Function onSuccess, Function onFail}) async {
     try {
@@ -14,7 +15,8 @@ class UserManager {
       );
 
       if (result.user != null) {
-        onSuccess();
+        loggedInUser = await getCurrentUser();
+        onSuccess(loggedInUser);
       }
     } on PlatformException catch (e) {
       onFail(getErrorString(e.code));
@@ -29,7 +31,8 @@ class UserManager {
       );
 
       if (result.user != null) {
-        onSuccess();
+        loggedInUser = await getCurrentUser();
+        onSuccess(loggedInUser);
       }
     } on PlatformException catch (e) {
       onFail(getErrorString(e.code));

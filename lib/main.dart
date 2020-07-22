@@ -38,7 +38,7 @@ class FlashChat extends StatelessWidget {
             break;
           case '/chat':
             return MaterialPageRoute(
-              builder: (_) => ChatScreen(),
+              builder: (_) => ChatScreen(currentUser: settings.arguments),
             );
             break;
           case '/':
