@@ -16,7 +16,10 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController _messageTextController = TextEditingController();
+
   User loggedInUser;
+
+  String messageText = '';
 
   @override
   void initState() {
@@ -59,18 +62,30 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       controller: _messageTextController,
                       decoration: kMessageTextFieldDecoration,
+                      onChanged: (value) {
+                        setState(() {
+                          messageText = value;
+                        });
+                      },
                     ),
                   ),
                   FlatButton(
-                    onPressed: () async {
-                      final String text = _messageTextController.text;
-                      _messageTextController.clear();
+                    onPressed: messageText.isNotEmpty
+                        ? () async {
+                            _messageTextController.clear();
 
-                      await MessageManager().sendMessage(
-                        user: loggedInUser,
-                        text: text,
-                      );
-                    },
+                            await MessageManager().sendMessage(
+                              user: loggedInUser,
+                              text: messageText,
+                            );
+
+                            setState(() {
+                              messageText = '';
+                            });
+                          }
+                        : null,
+                    disabledTextColor: Colors.black54,
+                    textColor: Colors.lightBlueAccent,
                     child: Text(
                       'Send',
                       style: kSendButtonTextStyle,
